@@ -1,6 +1,7 @@
 package guru.springfamework.services;
 
 import guru.springfamework.api.v1.mapper.CustomerMapper;
+import guru.springfamework.api.v1.mapper.CustomerMapperImpl;
 import guru.springfamework.api.v1.model.CustomerDTO;
 import guru.springfamework.domain.Customer;
 import guru.springfamework.repositories.CustomerRepository;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -73,6 +75,35 @@ public class CustomerServiceTest {
         assertEquals(FIRST_NAME, customerDTO.getFirstName());
         assertEquals(LAST_NAME, customerDTO.getLastName());
         assertNotEquals("BOB",customerDTO.getFirstName());
+
+    }
+
+    @Test
+    public void testCreateNewCustomer(){
+        // given
+        // we craete a dummy customerDTO
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setFirstName("John");
+        customerDTO.setLastName("Snow");
+
+        // we create the saved customer
+        Customer savedCustomer = new Customer();
+        savedCustomer.setFirstName(customerDTO.getFirstName());
+        savedCustomer.setLastName(customerDTO.getLastName());
+        savedCustomer.setId(1l);
+
+        when(customerRepository.save(any(Customer.class))).thenReturn(savedCustomer);
+
+        //when
+        CustomerDTO savedDTO = customerService.createNewCustomer(customerDTO);
+
+        //then
+
+        assertEquals(customerDTO.getFirstName(),savedDTO.getFirstName());
+        assertEquals(customerDTO.getLastName(),savedDTO.getLastName());
+        assertEquals("/api/v1/customer/1",savedDTO.getCustomerUrl());
+
+
 
     }
 }
