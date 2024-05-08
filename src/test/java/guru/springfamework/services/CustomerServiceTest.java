@@ -1,7 +1,6 @@
 package guru.springfamework.services;
 
 import guru.springfamework.api.v1.mapper.CustomerMapper;
-import guru.springfamework.api.v1.mapper.CustomerMapperImpl;
 import guru.springfamework.api.v1.model.CustomerDTO;
 import guru.springfamework.domain.Customer;
 import guru.springfamework.repositories.CustomerRepository;
@@ -12,9 +11,9 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -81,7 +80,7 @@ public class CustomerServiceTest {
     @Test
     public void testCreateNewCustomer(){
         // given
-        // we craete a dummy customerDTO
+        // we create a dummy customerDTO
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setFirstName("John");
         customerDTO.setLastName("Snow");
@@ -101,8 +100,42 @@ public class CustomerServiceTest {
 
         assertEquals(customerDTO.getFirstName(),savedDTO.getFirstName());
         assertEquals(customerDTO.getLastName(),savedDTO.getLastName());
-        assertEquals("/api/v1/customer/1",savedDTO.getCustomerUrl());
+        assertEquals("/api/v1/customers/1",savedDTO.getCustomerUrl());
+    }
 
+    @Test
+    public void testUpdateCustomer(){
+        // given
+        // we create a dummy customerDTO
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setFirstName("John");
+
+        // existing customer in repository
+        Customer existingCustomer = new Customer();
+        existingCustomer.setFirstName("Robert");
+        existingCustomer.setLastName("James");
+        existingCustomer.setId(1L);
+
+        //saved Customer
+        Customer savedCustomer = new Customer();
+        savedCustomer.setFirstName(customerDTO.getFirstName());
+        savedCustomer.setLastName(existingCustomer.getLastName());
+        savedCustomer.setId(1l);
+
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.ofNullable(existingCustomer));
+        when(customerRepository.save(any(Customer.class))).thenReturn(savedCustomer);
+        //when
+
+        CustomerDTO savedDTO = customerService.updateCustomer(1L,customerDTO);
+
+        //thenc
+        assertEquals(customerDTO.getFirstName(),"John");
+        assertEquals(customerDTO.getLastName(),"James");
+        assertNotNull(customerDTO.getFirstName());
+        assertNotNull(customerDTO.getLastName());
+        assertNotEquals(customerDTO.getFirstName(),"");
+        assertNotEquals(customerDTO.getLastName(),"");
+        assertEquals("/api/v1/customers/1",savedDTO.getCustomerUrl());
 
 
     }

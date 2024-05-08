@@ -7,7 +7,6 @@ import guru.springfamework.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -45,15 +44,33 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(RuntimeException::new); //todo implement better exception handling
     }
 
+    private CustomerDTO saveCustomer(Customer customer){
+        // now save the customer
+        Customer savedCustomer = customerRepository.save(customer);
+        //return the DTO object after setting the url
+        CustomerDTO returnedCustomerDTO = customerMapper.customerToCustomerDTO(savedCustomer);
+        returnedCustomerDTO.setCustomerUrl("/api/v1/customers/" + savedCustomer.getId());
+        return returnedCustomerDTO;
+    }
+
     @Override
     public CustomerDTO createNewCustomer(CustomerDTO customerDTO) {
         //create and save the customer
         Customer customer = customerMapper.customerDTOtoCustomer(customerDTO);
-        Customer savedCustomer = customerRepository.save(customer);
-        // return the newly created Customer DTO object and set the url
-        CustomerDTO returnedDTO = customerMapper.customerToCustomerDTO(savedCustomer);
-        returnedDTO.setCustomerUrl("/api/v1/customer/"+ savedCustomer.getId());
+        return saveCustomer(customer);
+    }
 
-        return returnedDTO;
+    @Override
+    public CustomerDTO updateCustomer(long id, CustomerDTO customerDTO) {
+
+        if(customerDTO.getFirstName()== null || customerDTO.getFirstName().isEmpty())
+            customerDTO.setFirstName(getCustomer(id).getFirstName());
+        if(customerDTO.getLastName() == null || customerDTO.getLastName().isEmpty())
+            customerDTO.setLastName(getCustomer(id).getLastName());
+
+        //get the customer from DTO and set it's id to id passed in
+        Customer customer = customerMapper.customerDTOtoCustomer(customerDTO);
+        customer.setId(id);
+        return saveCustomer(customer);
     }
 }

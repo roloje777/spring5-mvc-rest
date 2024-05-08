@@ -1,7 +1,6 @@
 package guru.springfamework.controllers.v1;
 
 import guru.springfamework.api.v1.model.CustomerDTO;
-import guru.springfamework.domain.Customer;
 import guru.springfamework.services.CustomerService;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,11 +15,9 @@ import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -91,7 +88,7 @@ public class CustomerControllerTest extends AbstractControllerTest{
     }
 
     @Test
-    public void createNewCustomer() throws Exception {
+    public void testCreateNewCustomer() throws Exception {
         //given
         CustomerDTO customer = new CustomerDTO();
         customer.setFirstName("John");
@@ -111,5 +108,35 @@ public class CustomerControllerTest extends AbstractControllerTest{
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.firstName", equalTo("John")))
                 .andExpect(jsonPath("$.customerUrl", equalTo("/api/v1/customers/1")));
+    }
+
+    @Test
+    public void testUpdateCustomer() throws Exception {
+        // tests the Put action
+        //given
+        // passed in customer DTO
+        CustomerDTO passedInCustomer = new CustomerDTO();
+        passedInCustomer.setFirstName("John");
+        passedInCustomer.setLastName("Wayne");
+
+        //returned DTO
+        CustomerDTO returnedCustomer = new CustomerDTO();
+        returnedCustomer.setFirstName(passedInCustomer.getFirstName());
+        returnedCustomer.setLastName(passedInCustomer.getLastName());
+        returnedCustomer.setCustomerUrl("/api/v1/customers/1");
+
+        //when the service layer is called
+
+         when(customerService.updateCustomer(anyLong(),any(CustomerDTO.class))).thenReturn(returnedCustomer);
+         //when then mock put
+        mockMvc.perform(put("/api/v1/customers/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                //onverts object to JSON Object see AbstractControllerTest.java
+                .content(asJsonString(passedInCustomer)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName",equalTo("John")))
+                .andExpect(jsonPath("$.lastName",equalTo("Wayne")))
+                .andExpect(jsonPath("$.customerUrl",equalTo("/api/v1/customers/1")));
+
     }
 }
