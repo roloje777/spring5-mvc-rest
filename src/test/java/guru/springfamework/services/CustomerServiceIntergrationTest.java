@@ -62,7 +62,7 @@ public class CustomerServiceIntergrationTest {
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setFirstName(updatedName);
 
-        customerService.patchCustomer(id, customerDTO);
+        customerService.updateCustomer(id, customerDTO);
 
         Customer updatedCustomer = customerRepository.findById(id).get();
 
@@ -87,7 +87,7 @@ public class CustomerServiceIntergrationTest {
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setLastName(updatedName);
 
-        customerService.patchCustomer(id, customerDTO);
+        customerService.updateCustomer(id, customerDTO);
 
         Customer updatedCustomer = customerRepository.findById(id).get();
 

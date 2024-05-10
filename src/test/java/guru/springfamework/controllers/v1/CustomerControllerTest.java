@@ -139,4 +139,34 @@ public class CustomerControllerTest extends AbstractControllerTest{
                 .andExpect(jsonPath("$.customerUrl",equalTo("/api/v1/customers/1")));
 
     }
+
+    @Test
+    public void testPatchCustomer() throws Exception {
+        // tests the Put action
+        //given
+        // passed in customer DTO
+        CustomerDTO passedInCustomer = new CustomerDTO();
+       passedInCustomer.setLastName("Wayne");
+
+        //returned DTO
+        CustomerDTO returnedCustomer = new CustomerDTO();
+        returnedCustomer.setFirstName("John");
+        returnedCustomer.setLastName(passedInCustomer.getLastName());
+        returnedCustomer.setCustomerUrl("/api/v1/customers/1");
+
+        //when the service layer is called
+
+        when(customerService.updateCustomer(anyLong(),any(CustomerDTO.class))).thenReturn(returnedCustomer);
+        //when then mock put
+        mockMvc.perform(patch("/api/v1/customers/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        //converts object to JSON Object see AbstractControllerTest.java
+                        .content(asJsonString(passedInCustomer)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName",equalTo("John")))
+                .andExpect(jsonPath("$.lastName",equalTo("Wayne")))
+                .andExpect(jsonPath("$.customerUrl",equalTo("/api/v1/customers/1")));
+
+    }
+
 }

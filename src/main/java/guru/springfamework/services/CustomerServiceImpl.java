@@ -60,22 +60,22 @@ public class CustomerServiceImpl implements CustomerService {
         return saveCustomer(customer);
     }
 
+//    @Override
+//    public CustomerDTO updateCustomer(long id, CustomerDTO customerDTO) {
+//
+//        if(customerDTO.getFirstName()== null || customerDTO.getFirstName().isEmpty())
+//            customerDTO.setFirstName(getCustomer(id).getFirstName());
+//        if(customerDTO.getLastName() == null || customerDTO.getLastName().isEmpty())
+//            customerDTO.setLastName(getCustomer(id).getLastName());
+//
+//        //get the customer from DTO and set it's id to id passed in
+//        Customer customer = customerMapper.customerDTOtoCustomer(customerDTO);
+//        customer.setId(id);
+//        return saveCustomer(customer);
+//    }
+    // Will use method for PUT and PATCH
     @Override
     public CustomerDTO updateCustomer(long id, CustomerDTO customerDTO) {
-
-        if(customerDTO.getFirstName()== null || customerDTO.getFirstName().isEmpty())
-            customerDTO.setFirstName(getCustomer(id).getFirstName());
-        if(customerDTO.getLastName() == null || customerDTO.getLastName().isEmpty())
-            customerDTO.setLastName(getCustomer(id).getLastName());
-
-        //get the customer from DTO and set it's id to id passed in
-        Customer customer = customerMapper.customerDTOtoCustomer(customerDTO);
-        customer.setId(id);
-        return saveCustomer(customer);
-    }
-
-    @Override
-    public CustomerDTO patchCustomer(Long id, CustomerDTO customerDTO) {
 
         return customerRepository.findById(id)
                 .map(customer -> {
@@ -85,7 +85,9 @@ public class CustomerServiceImpl implements CustomerService {
                     if(customerDTO.getLastName()!=null && !customerDTO.getLastName().trim().isEmpty())
                         customer.setLastName(customerDTO.getLastName());
 
-                    return customerMapper.customerToCustomerDTO(customerRepository.save(customer));
+                    CustomerDTO returnedCustomerDTO = customerMapper.customerToCustomerDTO(customerRepository.save(customer));
+                    returnedCustomerDTO.setCustomerUrl("/api/v1/customers/"+ id);
+                    return returnedCustomerDTO;
 
                 }).orElseThrow(RuntimeException::new);
     }

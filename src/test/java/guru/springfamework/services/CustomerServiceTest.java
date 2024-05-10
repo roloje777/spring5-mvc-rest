@@ -109,6 +109,7 @@ public class CustomerServiceTest {
         // we create a dummy customerDTO
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setFirstName("John");
+        customerDTO.setLastName("James");
 
         // existing customer in repository
         Customer existingCustomer = new Customer();
@@ -126,16 +127,54 @@ public class CustomerServiceTest {
         when(customerRepository.save(any(Customer.class))).thenReturn(savedCustomer);
         //when
 
-        CustomerDTO savedDTO = customerService.updateCustomer(1L,customerDTO);
+        CustomerDTO returnedDTO = customerService.updateCustomer(1L,customerDTO);
 
-        //thenc
-        assertEquals(customerDTO.getFirstName(),"John");
-        assertEquals(customerDTO.getLastName(),"James");
-        assertNotNull(customerDTO.getFirstName());
-        assertNotNull(customerDTO.getLastName());
-        assertNotEquals(customerDTO.getFirstName(),"");
-        assertNotEquals(customerDTO.getLastName(),"");
-        assertEquals("/api/v1/customers/1",savedDTO.getCustomerUrl());
+        //then
+        assertEquals(returnedDTO.getFirstName(),"John");
+        assertEquals(returnedDTO.getLastName(),"James");
+        assertNotNull(returnedDTO.getFirstName());
+        assertNotNull(returnedDTO.getLastName());
+        assertNotEquals(returnedDTO.getFirstName(),"");
+        assertNotEquals(returnedDTO.getLastName(),"");
+        assertEquals("/api/v1/customers/1",returnedDTO.getCustomerUrl());
+
+
+    }
+
+    @Test
+    public void test_patch_Customer() {
+        // given
+        // we create a dummy customerDTO
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setFirstName("John");
+
+
+        // existing customer in repository
+        Customer existingCustomer = new Customer();
+        existingCustomer.setFirstName("Robert");
+        existingCustomer.setLastName("James");
+        existingCustomer.setId(1L);
+
+        //saved Customer
+        Customer savedCustomer = new Customer();
+        savedCustomer.setFirstName(customerDTO.getFirstName());
+        savedCustomer.setLastName(existingCustomer.getLastName());
+        savedCustomer.setId(1l);
+
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.ofNullable(existingCustomer));
+        when(customerRepository.save(any(Customer.class))).thenReturn(savedCustomer);
+        //when
+
+        CustomerDTO returnedDTO = customerService.updateCustomer(1L,customerDTO);
+
+        //then
+        assertEquals(returnedDTO.getFirstName(),"John");
+        assertEquals(returnedDTO.getLastName(),"James");
+        assertNotNull(returnedDTO.getFirstName());
+        assertNotNull(returnedDTO.getLastName());
+        assertNotEquals(returnedDTO.getFirstName(),"");
+        assertNotEquals(returnedDTO.getLastName(),"");
+        assertEquals("/api/v1/customers/1",returnedDTO.getCustomerUrl());
 
 
     }
