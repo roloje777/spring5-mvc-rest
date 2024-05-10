@@ -13,10 +13,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.apache.tomcat.jni.Mmap.delete;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CustomerServiceTest {
 
@@ -177,5 +178,14 @@ public class CustomerServiceTest {
         assertEquals("/api/v1/customers/1",returnedDTO.getCustomerUrl());
 
 
+    }
+
+    @Test
+    public void testDelete(){
+        long id = 0;
+        customerService.delete(id);
+        // verifies that the dlete method was called once
+        // see https://www.baeldung.com/mockito-verify
+        verify(customerRepository, times(1)).deleteById(anyLong());
     }
 }
