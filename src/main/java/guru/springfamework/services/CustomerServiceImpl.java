@@ -42,7 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
                     customerDTO.setCustomerUrl(CustomerController.BASE_URL + "/" + customer.getId());
                     return customerDTO;
                 })
-                .orElseThrow(RuntimeException::new); //todo implement better exception handling
+                .orElseThrow(ResourceNotFoundException::new); //todo implement better exception handling
     }
 
     private CustomerDTO saveCustomer(Customer customer){
@@ -90,7 +90,7 @@ public class CustomerServiceImpl implements CustomerService {
                     returnedCustomerDTO.setCustomerUrl(CustomerController.BASE_URL + "/" + id);
                     return returnedCustomerDTO;
 
-                }).orElseThrow(RuntimeException::new);
+                }).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override

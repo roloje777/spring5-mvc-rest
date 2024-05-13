@@ -188,4 +188,12 @@ public class CustomerServiceTest {
         // see https://www.baeldung.com/mockito-verify
         verify(customerRepository, times(1)).deleteById(anyLong());
     }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void getCustomerByIdThrowsResourceNotFoundException() throws Exception {
+
+        when(customerRepository.findById(anyLong())).thenThrow(ResourceNotFoundException.class);
+
+        customerService.getCustomer(5L);
+    }
 }

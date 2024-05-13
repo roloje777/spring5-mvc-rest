@@ -16,9 +16,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyLong;import static org.mockito.Mockito.when;
+
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -97,6 +100,8 @@ public class CustomerServiceIntergrationTest {
         assertThat(originalLastName, not(equalTo(updatedCustomer.getLastName())));
     }
 
+
+
     // Note in JUnit5 One could rather use @BeforeAll to instanciate the Database etc as it only runs once
     private Long getCustomerIdValue(){
         List<Customer> customers = customerRepository.findAll();
@@ -106,6 +111,7 @@ public class CustomerServiceIntergrationTest {
         //return first id
         return customers.get(0).getId();
     }
+
 
 
 }
