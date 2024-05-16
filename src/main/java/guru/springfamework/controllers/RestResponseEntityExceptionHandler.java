@@ -18,4 +18,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<Object>("Resource Not Found", new HttpHeaders(), HttpStatus.NOT_FOUND);
 
     }
+
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity<Object> handleIllegalArgumentException(Exception exception, WebRequest request){
+
+        return new ResponseEntity<Object>("Vendor must have a name", new HttpHeaders(), HttpStatus.BAD_REQUEST);
+
+    }
+
+
 }
